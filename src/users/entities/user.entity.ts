@@ -3,28 +3,41 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @Column()
+  @Column('text')
   username: string;
 
-  @Column({ unique: true })
-  googleId: string;
+  @Column('text')
+  lastname: string;
 
-  @Column({ unique: true })
+  @Column('varchar', { unique: true, nullable: true })
+  googleId?: number;
+
+  @Column('varchar', { unique: true, nullable: true })
+  facebookId?: number;
+
+  @Column('text', { unique: true })
   email: string;
 
-  @Column()
+  @Column({ default: 'user' })
   role: string;
+
+  @Column('varchar', { nullable: true })
+  phone?: number;
+
+  @Column({ default: 'true' })
+  is_active: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updatedAt: Date;
 }
