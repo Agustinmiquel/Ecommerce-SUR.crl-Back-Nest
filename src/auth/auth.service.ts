@@ -1,8 +1,10 @@
-import { HttpStatus, Injectable, Logger, Req } from '@nestjs/common';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HttpStatus, Inject, Injectable, Logger, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { Twilio } from 'twilio';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +13,8 @@ export class AuthService {
   constructor(
     private readonly userService: UsersService,
     @InjectRepository(User) private readonly userRepository,
+    @Inject('TwilioSDK') private readonly twilioClient: Twilio,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
   async googleCreateUser(profile: any): Promise<any> {
     const { email, firstname, lastname, googleId, phone } = profile;
@@ -69,5 +73,45 @@ export class AuthService {
         status: HttpStatus.OK,
       };
     });
+  }
+
+  // Generacion del codigo
+  async auth2PAVerificationCode(): Promise<number> {
+    return Math.floor(100000 + Math.random() * 900000);
+  }
+
+  // Envio de codigo de verificacion
+  async sendSms(to: string, message: string): Promise<void> {
+    try {
+      const result = await this.twilioClient.messages.create({
+        body: message,
+        from: process.env.TWILIO_NUMBER,
+        to: to,
+      });
+      this.logger.log(`Message sent: ${result.sid}`);
+    } catch (error) {
+      this.logger.error(error.message);
+      throw error;
+    }
+  }
+
+  async SendCode(id: string, phone: string): Promise<void> {
+    const code = await this.auth2PAVerificationCode();
+    const user = await this.userService.findOne(id);
+    if (!user) {
+      this.logger.error(`User with googleId ${id} not found`);
+      throw new Error(`User with googleId ${id} not found`);
+    }
+    user.phone = phone;
+    console.log(user.phone);
+    await this.userRepository.save(user);
+    try {
+      const message = `Your verification code is: ${code}`;
+      await this.sendSms(phone, message);
+      this.logger.log(`Code sent: ${code}`);
+    } catch (error) {
+      this.logger.error(`Failed to send verification code: ${error.message}`);
+    }
+    return await this.cacheManager.set(phone, code, 300);
   }
 }

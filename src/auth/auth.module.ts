@@ -8,6 +8,8 @@ import { User } from 'src/users/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailConfig } from 'src/utils/Nodemailer.config';
 import { UtilsModule } from 'src/utils/utils.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { TwilioProvider } from 'src/utils/twilio.provider';
 
 @Module({
   imports: [
@@ -15,9 +17,10 @@ import { UtilsModule } from 'src/utils/utils.module';
     PassportModule.register({ defaultStrategy: 'google' }),
     TypeOrmModule.forFeature([User]),
     UtilsModule,
+    CacheModule.register(),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, EmailConfig],
+  providers: [AuthService, GoogleStrategy, EmailConfig, TwilioProvider],
   exports: [],
 })
 export class AuthModule {}

@@ -14,7 +14,7 @@ export class UsersService {
   ) {}
 
   async findByGooglId(googleId: number): Promise<User | undefined> {
-    return await this.userRepository.findOne({ where: { googleId } });
+    return await this.userRepository.findOne({ where: { googleId: googleId } });
   }
 
   async create(createUserDto: CreateUserDto) {
@@ -31,8 +31,12 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
-    return await this.userRepository.findOne({ where: { id } });
+  async findOne(id: string): Promise<User | undefined> {
+    const user = await this.userRepository.findOne({ where: { id: id } });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

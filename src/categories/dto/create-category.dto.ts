@@ -9,9 +9,10 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(150)
-  description: string;
+  @IsOptional()
+  description?: string;
 
   @IsOptional()
   @IsString()
-  imageCategory: string;
+  imageCategory?: string;
 }

@@ -1,4 +1,13 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -24,5 +33,14 @@ export class AuthController {
     await this.authService.logout(req);
     res.clearCookie('sessionId');
     res.json({ message: 'Logout successful' });
+  }
+
+  @Post('send-sms/:id')
+  async sendSms(
+    @Param('id') id: string,
+    @Body('phone') phone: string,
+  ): Promise<string> {
+    await this.authService.SendCode(id, phone);
+    return 'SMS envidado!';
   }
 }

@@ -9,7 +9,7 @@ import {
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column('text')
   username: string;
@@ -17,7 +17,7 @@ export class User {
   @Column('text')
   lastname: string;
 
-  @Column('varchar', { unique: true, nullable: true })
+  @Column({ type: 'numeric', unique: true, nullable: true })
   googleId?: number;
 
   @Column('varchar', { unique: true, nullable: true })
@@ -29,8 +29,8 @@ export class User {
   @Column({ default: 'user' })
   role: string;
 
-  @Column('varchar', { nullable: true })
-  phone?: number;
+  @Column('varchar', { unique: true, default: '0' })
+  phone?: string;
 
   @Column({ default: 'true' })
   is_active: boolean;

@@ -2,7 +2,6 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
-import { OrdersModule } from './orders/orders.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,13 +13,15 @@ import {
 } from '@willsoto/nestjs-prometheus';
 import { UtilsModule } from './utils/utils.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { BrandModule } from './brand/brand.module';
+import { CacheModule, CacheStore } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
     UsersModule,
     ProductsModule,
     AuthModule,
-    OrdersModule,
     CategoriesModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -31,6 +32,22 @@ import { MailerModule } from '@nestjs-modules/mailer';
       defaultMetrics: {
         enabled: true,
       },
+    }),
+    CacheModule.registerAsync({
+      useFactory: async () => {
+        const store = await redisStore({
+          socket: {
+            host: 'localhost',
+            port: 6379,
+          },
+        });
+
+        return {
+          store: store as unknown as CacheStore,
+          ttl: 3 * 60000,
+        };
+      },
+      isGlobal: true,
     }),
     UtilsModule,
     MailerModule.forRoot({
@@ -47,6 +64,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         from: '"No Reply" <>"',
       },
     }),
+    BrandModule,
   ],
   controllers: [],
   providers: [
