@@ -7,6 +7,7 @@ dotenv.config();
 export const databaseConfig = (
   configService: ConfigService,
 ): TypeOrmModuleOptions => ({
+  logging: true,
   type: 'postgres',
   // host: process.env.DB_HOST,
   // port: parseInt(process.env.DB_PORT, 10),
@@ -14,6 +15,7 @@ export const databaseConfig = (
   // password: process.env.DB_PASSWORD,
   // database: process.env.DB_NAME,
   url: configService.get<string>('DATABASE_URL'),
+  ssl: { rejectUnauthorized: false },
   // entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: true,
   autoLoadEntities: true,
