@@ -55,7 +55,7 @@ import { redisStore } from 'cache-manager-redis-yet';
         },
       },
       defaults: {
-        from: '"No Reply" <>"',
+        from: '"No Reply" <no-reply@example.com>>"',
       },
     }),
     BrandModule,
