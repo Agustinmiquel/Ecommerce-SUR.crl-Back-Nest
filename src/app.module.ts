@@ -26,7 +26,12 @@ import { redisStore } from 'cache-manager-redis-yet';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot(databaseConfig),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) =>
+        databaseConfig(configService),
+      inject: [ConfigService],
+    }),
     PrometheusModule.register({
       path: '/metrics',
       defaultMetrics: {
