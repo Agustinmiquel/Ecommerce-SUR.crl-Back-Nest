@@ -37,7 +37,7 @@ import { redisStore } from 'cache-manager-redis-yet';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         store: redisStore,
-        url: configService.get<string>('REDIS_URL'),
+        url: configService.get<string>('REDISCLOUD_URL'),
         ttl: 3 * 60000,
       }),
       inject: [ConfigService],
