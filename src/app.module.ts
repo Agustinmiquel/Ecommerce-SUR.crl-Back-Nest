@@ -3,7 +3,7 @@ import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './utils/database.config';
 import {
@@ -14,7 +14,7 @@ import {
 import { UtilsModule } from './utils/utils.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { BrandModule } from './brand/brand.module';
-import { CacheModule, CacheStore } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
@@ -34,19 +34,13 @@ import { redisStore } from 'cache-manager-redis-yet';
       },
     }),
     CacheModule.registerAsync({
-      useFactory: async () => {
-        const store = await redisStore({
-          socket: {
-            host: 'localhost',
-            port: 6379,
-          },
-        });
-
-        return {
-          store: store as unknown as CacheStore,
-          ttl: 3 * 60000,
-        };
-      },
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        store: redisStore,
+        url: configService.get<string>('REDIS_URL'),
+        ttl: 3 * 60000,
+      }),
+      inject: [ConfigService],
       isGlobal: true,
     }),
     UtilsModule,
