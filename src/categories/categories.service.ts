@@ -15,7 +15,7 @@ export class CategoriesService {
   }
 
   async findAll() {
-    return await this.categoryRepository.findAll();
+    return await this.categoryRepository.find();
   }
 
   findOne(id: number) {
