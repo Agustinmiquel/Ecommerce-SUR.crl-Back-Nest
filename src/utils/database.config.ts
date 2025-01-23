@@ -14,7 +14,7 @@ export const databaseConfig = (
   // password: process.env.DB_PASSWORD,
   // database: process.env.DB_NAME,
   url: configService.get<string>('DATABASE_URL'),
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  // entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: true,
   autoLoadEntities: true,
 });
