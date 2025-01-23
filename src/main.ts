@@ -27,7 +27,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(passport.initialize());
   app.use(passport.session());
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
   Logger.log('Server running on http://localhost:3000', 'Bootstrap');
 }
 bootstrap();
