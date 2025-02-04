@@ -4,6 +4,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -24,6 +25,16 @@ async function bootstrap() {
       cookie: { maxAge: 3600000 },
     }),
   );
+  // Configuracion de Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Del Sur Ecommerce API Documentation')
+    .setDescription('API documentation for Sur Ecommerce')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('apis-DelSur', app, document);
+  // --------------------------
   app.use(cookieParser());
   app.use(passport.initialize());
   app.use(passport.session());
