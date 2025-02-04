@@ -56,6 +56,7 @@ export class ProductsController {
   }
 
   // Buscar por nombre del producto
+  @UseGuards(JwtAuthGuard)
   @Post('search')
   async searchProduct(@Body('name') name: string) {
     return await this.productsService.searchProduct(name);
