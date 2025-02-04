@@ -10,6 +10,7 @@ import { EmailConfig } from 'src/utils/Nodemailer.config';
 import { UtilsModule } from 'src/utils/utils.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TwilioProvider } from 'src/utils/twilio.provider';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -17,6 +18,10 @@ import { TwilioProvider } from 'src/utils/twilio.provider';
     PassportModule.register({ defaultStrategy: 'google' }),
     TypeOrmModule.forFeature([User]),
     UtilsModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '60m' },
+    }),
     CacheModule.register(),
   ],
   controllers: [AuthController],

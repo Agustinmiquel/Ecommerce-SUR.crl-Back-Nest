@@ -1,5 +1,6 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpStatus, Inject, Injectable, Logger, Req } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -12,6 +13,7 @@ export class AuthService {
 
   constructor(
     private readonly userService: UsersService,
+    private readonly jwtService: JwtService,
     @InjectRepository(User) private readonly userRepository,
     @Inject('TwilioSDK') private readonly twilioClient: Twilio,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -60,7 +62,9 @@ export class AuthService {
   //   }
 
   async login(user: any): Promise<any> {
+    const payload = { email: user.email, sub: user.id };
     return {
+      access_Token: this.jwtService.sign(payload),
       message: 'Login successful',
       user,
     };
