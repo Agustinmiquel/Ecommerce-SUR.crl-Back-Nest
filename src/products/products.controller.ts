@@ -18,9 +18,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
+  ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiTags,
 } from '@nestjs/swagger';
 
 @ApiTags('products')
