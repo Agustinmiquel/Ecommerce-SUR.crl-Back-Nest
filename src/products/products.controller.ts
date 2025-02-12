@@ -85,7 +85,6 @@ export class ProductsController {
   @ApiOperation({ summary: 'Buscar producto por el buscador' })
   @ApiResponse({ status: 200, description: 'Return similar products' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @UseGuards(JwtAuthGuard)
   @Post('search')
   async searchProduct(@Body('name') name: string) {
     return await this.productsService.searchProduct(name);
