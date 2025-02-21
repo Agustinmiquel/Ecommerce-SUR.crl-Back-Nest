@@ -38,16 +38,16 @@ import { redisStore } from 'cache-manager-redis-yet';
         enabled: true,
       },
     }),
-    CacheModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        url: configService.get<string>('REDISCLOUD_URL'),
-        ttl: 3 * 60000,
-      }),
-      inject: [ConfigService],
-      isGlobal: true,
-    }),
+    // CacheModule.registerAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     store: redisStore,
+    //     url: configService.get<string>('REDISCLOUD_URL'),
+    //     ttl: 3 * 60000,
+    //   }),
+    //   inject: [ConfigService],
+    //   isGlobal: true,
+    // }),
     UtilsModule,
     MailerModule.forRoot({
       transport: {

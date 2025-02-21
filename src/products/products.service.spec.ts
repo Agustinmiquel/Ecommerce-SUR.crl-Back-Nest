@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsService } from './products.service';
-import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Category } from 'src/categories/entities/category.entity';
+import { Repository } from 'typeorm';
 
 const mockRepositoryProduct = {
   create: jest.fn().mockImplementation((dto) => dto),
