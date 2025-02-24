@@ -105,4 +105,16 @@ describe('ProductsService', () => {
     const result = await service.findByCategory(productDto.categoryId);
     expect(result).toEqual([]);
   });
+
+  // buscar todos los productos
+  it('should be return all products', async () => {
+    const result = await service.findAll(1, 10);
+    expect(result).toEqual([]);
+  });
+
+  // buscar un producto por su nombre
+  it('should be return all products with the same name', async () => {
+    const result = await service.searchProduct('product test');
+    expect(result).toEqual([]);
+  });
 });
