@@ -4,7 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import * as XSLS from 'xlsx';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Category } from 'src/categories/entities/category.entity';
+import { Category } from '../categories/entities/category.entity';
 import { CreateCategoryDto } from 'src/categories/dto/create-category.dto';
 import { Like } from 'typeorm';
 
@@ -77,7 +77,7 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    return await this.productRepository.remove(id);
+    return await this.productRepository.delete(id);
   }
 
   async cargaProducts(file: Express.Multer.File) {

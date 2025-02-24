@@ -2,8 +2,24 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Category } from 'src/categories/entities/category.entity';
 import { Repository } from 'typeorm';
+import { Category } from '../categories/entities/category.entity';
+
+const productDto = {
+  name: 'product test',
+  description: 'description test',
+  price: 100,
+  stock: 10,
+  codigo: 31231,
+  categoryId: '1',
+  IsActive: true,
+  ImageProduct: 'https://www.google.com',
+};
+
+const categoryDto = {
+  id: 1,
+  name: 'category test',
+};
 
 const mockRepositoryProduct = {
   create: jest.fn().mockImplementation((dto) => dto),
@@ -13,27 +29,30 @@ const mockRepositoryProduct = {
       Promise.resolve({ id: Date.now(), ...product }),
     ),
   find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(null),
+  findOne: jest.fn().mockImplementation(({ where: { codigo } }) => {
+    if (codigo === 31231) {
+      return Promise.resolve({
+        ...productDto,
+      });
+    }
+    return Promise.resolve(null);
+  }),
+  delete: jest.fn().mockResolvedValue({ affected: 1 }),
 };
 
 const mockCategoryRepository = {
-  findOne: jest.fn().mockResolvedValue(null),
+  findOne: jest.fn().mockImplementation(({ where: { name } }) => {
+    if (name === '1') {
+      return Promise.resolve(categoryDto);
+    }
+    return Promise.resolve(null);
+  }),
 };
 
 describe('ProductsService', () => {
   let service: ProductsService;
   let repository: Repository<Product>;
   let categoryRepository: Repository<Category>;
-  const productDto = {
-    name: 'product test',
-    description: 'description test',
-    price: 100,
-    stock: 10,
-    codigo: 31231,
-    categoryId: '1',
-    IsActive: true,
-    ImageProduct: 'https://www.google.com',
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,7 +64,7 @@ describe('ProductsService', () => {
         },
         {
           provide: getRepositoryToken(Category),
-          useValue: mockCategoryRepository,
+          useValue: mockCategoryRepository, // Asegura que está aquí
         },
       ],
     }).compile();
@@ -62,16 +81,28 @@ describe('ProductsService', () => {
   });
 
   // crear un producto
-  it('should be created a product', () => {
-    const product = {
-      name: 'product test',
-      description: 'description test',
-      price: 100,
-      stock: 10,
-    };
-    expect(service.create(productDto)).toEqual({
-      id: expect.any(Number),
-      ...product,
+  it('should be created a product', async () => {
+    const result = await service.create(productDto);
+    expect(result).toEqual({
+      ...productDto,
     });
+  });
+
+  // buscar un producto por codigo
+  it('should be return a product', async () => {
+    const result = await service.findByCode(productDto.codigo);
+    expect(result).toEqual({ ...productDto });
+  });
+
+  // Eliminar un producto
+  it('should be return a product', async () => {
+    const result = await service.remove(productDto.codigo);
+    expect(result).toEqual({ affected: 1 });
+  });
+
+  // buscar un producto por su categoria
+  it('should be return a product', async () => {
+    const result = await service.findByCategory(productDto.categoryId);
+    expect(result).toEqual([]);
   });
 });

@@ -13,7 +13,6 @@ import {
 } from '@willsoto/nestjs-prometheus';
 import { UtilsModule } from './utils/utils.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { BrandModule } from './brand/brand.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 
@@ -63,7 +62,6 @@ import { redisStore } from 'cache-manager-redis-yet';
         from: '"No Reply" <no-reply@example.com>>"',
       },
     }),
-    BrandModule,
   ],
   controllers: [],
   providers: [
