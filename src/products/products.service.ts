@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Category } from '../categories/entities/category.entity';
 import { CreateCategoryDto } from 'src/categories/dto/create-category.dto';
-import { Like } from 'typeorm';
+import { ILike } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
@@ -61,7 +61,7 @@ export class ProductsService {
   // Buscar por nombre del producto
   async searchProduct(name: string): Promise<Product[]> {
     const products = await this.productRepository.find({
-      where: { name: Like(`%${name}%`) },
+      where: { name: ILike(`%${name}%`) },
     });
     return products;
   }
