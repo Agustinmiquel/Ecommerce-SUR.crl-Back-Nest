@@ -38,7 +38,7 @@ export class ProductsController {
     return await this.productsService.create(createProductDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Crear un producto desde un archivo Excel' })
   @ApiResponse({ status: 200, description: 'Products has been created' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
