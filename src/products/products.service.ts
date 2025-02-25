@@ -43,7 +43,8 @@ export class ProductsService {
       throw new Error(`No existe la category: ${categoryName}`);
     }
     return await this.productRepository.find({
-      where: { categoryId: category },
+      where: { category: { id: category.id } },
+      relations: ['category'],
     });
   }
 

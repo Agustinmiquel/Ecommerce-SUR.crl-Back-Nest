@@ -20,8 +20,9 @@ export class Product {
 
   @ManyToOne(() => Category, (category) => category.productsId, {
     nullable: true,
+    eager: true,
   })
-  @JoinColumn({ name: 'categoryName', referencedColumnName: 'name' })
+  @JoinColumn({ name: 'categoryId' })
   categoryId: Category;
 
   @Column('decimal', { default: 0.0 })
