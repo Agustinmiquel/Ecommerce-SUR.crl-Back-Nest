@@ -15,6 +15,6 @@ export class Category {
   @Column('text', { nullable: true })
   imageCategory?: string;
 
-  @OneToMany(() => Product, (product) => product.categoryId)
+  @OneToMany(() => Product, (product) => product.category)
   productsId: Product[];
 }
