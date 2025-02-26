@@ -130,7 +130,7 @@ export class ProductsService {
         const product = this.productRepository.create({
           codigo,
           name,
-          category,
+          categoryName,
           price,
           isActive,
           imageProduct,
