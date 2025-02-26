@@ -22,7 +22,7 @@ export class Product {
     nullable: true,
     eager: true,
   })
-  @JoinColumn({ name: 'id' })
+  @JoinColumn({ name: 'categoryId' })
   category: Category;
 
   @Column('decimal', { default: 0.0 })
