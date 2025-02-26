@@ -145,42 +145,49 @@ export class ProductsService {
     const hoja = excel.Sheets[hojaCodigo];
     const datos = XSLS.utils.sheet_to_json(hoja);
 
-    for (const data in datos) {
+    // 🔍 Cargar todas las categorías una sola vez
+    const categorias = await this.categoryRepository.find();
+    const categoriaMap = new Map(
+      categorias.map((cat) => [cat.name.trim().toLowerCase(), cat.id]),
+    );
+
+    for (const data of datos) {
       const productName = data['name'] ? String(data['name']).trim() : null;
       const categoryName = data['category']
-        ? String(data['category']).trim()
+        ? String(data['category']).trim().toLowerCase()
         : null;
 
       if (!productName || !categoryName) {
-        this.logger.error('Faltan datos en el archivo');
-        continue;
-      }
-
-      const product = await this.productRepository.findOne({
-        where: { name: productName },
-      });
-      if (!product) {
-        this.logger.error(`No existe el producto: ${productName}`);
-        continue;
-      }
-
-      const categoria = await this.categoryRepository.findOne({
-        where: { name: categoryName },
-      });
-      if (!categoria) {
-        this.logger.error(`No existe la categoría: ${categoryName}`);
-        continue;
-      }
-
-      product.category = categoria;
-      try {
-        await this.productRepository.save(product);
-      } catch (error) {
-        this.logger.error(
-          `Error al actualizar la categoría del producto: ${error.message}`,
+        this.logger.warn(
+          `Producto sin nombre o categoría: ${JSON.stringify(data)}`,
         );
-        throw new Error(error.message);
+        continue;
+      }
+
+      // 🔎 Buscar el ID de la categoría en el mapa (sin consulta extra a la BD)
+      const categoryId = categoriaMap.get(categoryName);
+      if (!categoryId) {
+        this.logger.warn(
+          `Categoría no encontrada: ${categoryName}. Omitiendo...`,
+        );
+        continue;
+      }
+
+      // ⚡ Actualizar directamente sin necesidad de cargar todo el producto
+      const result = await this.productRepository.update(
+        { name: productName },
+        { category: { id: categoryId } },
+      );
+
+      if (result.affected > 0) {
+        this.logger.log(
+          `✅ Producto actualizado: ${productName} → Categoría: ${categoryName}`,
+        );
+      } else {
+        this.logger.warn(`⚠️ Producto no encontrado: ${productName}`);
       }
     }
+
+    return { message: '✅ Actualización de categorías completada' };
   }
 }
