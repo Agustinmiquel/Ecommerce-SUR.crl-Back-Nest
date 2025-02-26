@@ -36,12 +36,13 @@ export class ProductsService {
     }
   }
 
-  async findByCategory(categoryName: string): Promise<Product[] | undefined> {
+  async findByCategory(name: string): Promise<Product[]> {
     const category = await this.categoryRepository.findOne({
-      where: { name: categoryName },
+      where: { name: ILike(name) },
     });
-    if (!category || null) {
-      throw new Error(`No existe la category: ${categoryName}`);
+    if (!category) {
+      this.logger.error(`No existe la categoría: ${name}`);
+      throw new NotFoundException(`No existe la categoría: ${name}`);
     }
     return await this.productRepository.find({
       where: { category: { id: category.id } },

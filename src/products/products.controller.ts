@@ -68,8 +68,8 @@ export class ProductsController {
   @ApiOperation({ summary: 'Buscar un producto por su categoría' })
   @ApiResponse({ status: 200, description: 'Return a product of category' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @Get('category/:categoryName')
-  async findByCategory(@Param('categoryName') categoryName: string) {
+  @Get('category/:name')
+  async findByCategory(@Param('name') categoryName: string) {
     return await this.productsService.findByCategory(categoryName);
   }
 

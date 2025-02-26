@@ -6,10 +6,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
+  @Exclude()
   id: number;
 
   @Column()
