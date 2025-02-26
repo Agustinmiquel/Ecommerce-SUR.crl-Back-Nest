@@ -103,7 +103,7 @@ export class ProductsService {
 
       if (data['name']) {
         const existProduct = await this.productRepository.findOne({
-          where: { name: categoryName },
+          where: { name: name },
         });
         if (existProduct) {
           this.logger.log(
