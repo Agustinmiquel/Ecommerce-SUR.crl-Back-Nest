@@ -91,8 +91,8 @@ export class ProductsService {
     for (const data of datos) {
       const codigo = data['codigo'] ? String(data['codigo']).trim() : null;
       const name = data['name'] ? String(data['name']).trim() : null;
-      const categoryName = data['categoryId']
-        ? String(data['categoryId']).trim()
+      const categoryName = data['category']
+        ? String(data['category']).trim()
         : null;
       const price = data['price'] ? parseFloat(data['price']) : 0.0;
       const isActive = data['IsActive']
@@ -132,8 +132,8 @@ export class ProductsService {
           name,
           category,
           price,
-          isActive: isActive,
-          imageProduct: imageProduct,
+          isActive,
+          imageProduct,
         });
         await this.productRepository.save(product);
       } catch (error) {
