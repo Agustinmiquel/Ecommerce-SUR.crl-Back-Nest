@@ -118,19 +118,15 @@ export class ProductsService {
         where: { name: categoryName },
       });
       if (!category) {
-        const createCategoryDto: CreateCategoryDto = {
-          name: categoryName,
-        };
-        category = this.categoryRepository.create(createCategoryDto);
-        await this.categoryRepository.save(category);
-        this.logger.log(`Categoría con nombre ${categoryName} creada.`);
+        this.logger.error(`No existe la categoría: ${categoryName}`);
+        continue;
       }
 
       try {
         const product = this.productRepository.create({
           codigo,
           name,
-          categoryName,
+          category,
           price,
           isActive,
           imageProduct,
