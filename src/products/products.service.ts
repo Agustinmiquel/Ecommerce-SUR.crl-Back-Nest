@@ -88,45 +88,52 @@ export class ProductsService {
     const datos = XSLS.utils.sheet_to_json(hoja);
 
     for (const data of datos) {
-      const productDto: CreateProductDto = {
-        codigo: data['codigo'] ? data['codigo'].trim() : null,
-        name: data['name'] ? data['name'].trim() : null,
-        categoryId: data['categoryId'] ? data['categoryId'].trim() : null,
-        price: data['price'] ? parseFloat(data['price'].trim()) : 0.0,
-        IsActive: data['IsActive'] ? data['IsActive'] === 'true' : true,
-        ImageProduct: data['ImageProduct']
-          ? data['ImageProduct'].trim()
-          : 'default.png',
-      };
+      const codigo = data['codigo'] ? String(data['codigo']).trim() : null;
+      const name = data['name'] ? String(data['name']).trim() : null;
+      const categoryName = data['categoryId']
+        ? String(data['categoryId']).trim()
+        : null;
+      const price = data['price'] ? parseFloat(data['price']) : 0.0;
+      const isActive = data['IsActive']
+        ? String(data['IsActive']).toLowerCase() === 'true'
+        : true;
+      const imageProduct = data['ImageProduct']
+        ? String(data['ImageProduct']).trim()
+        : 'default.png';
 
       if (data['name']) {
         const existProduct = await this.productRepository.findOne({
-          where: { name: productDto.name },
+          where: { name: categoryName },
         });
         if (existProduct) {
           this.logger.log(
-            `Producto con nombre ${productDto.name} ya existe. Omitiendo...`,
+            `Producto con nombre ${name} ya existe. Omitiendo...`,
           );
           continue;
         }
       }
 
       let category = await this.categoryRepository.findOne({
-        where: { name: productDto.categoryId },
+        where: { name: categoryName },
       });
       if (!category) {
         const createCategoryDto: CreateCategoryDto = {
-          name: productDto.categoryId,
+          name: categoryName,
         };
         category = this.categoryRepository.create(createCategoryDto);
         await this.categoryRepository.save(category);
-        this.logger.log(
-          `Categoría con nombre ${productDto.categoryId} creada.`,
-        );
+        this.logger.log(`Categoría con nombre ${categoryName} creada.`);
       }
 
       try {
-        const product = this.productRepository.create(productDto);
+        const product = this.productRepository.create({
+          codigo,
+          name,
+          category: categoryName,
+          price,
+          isActive: isActive,
+          imageProduct: imageProduct,
+        });
         await this.productRepository.save(product);
       } catch (error) {
         this.logger.error(`Error al cargar los productos: ${error.message}`);
