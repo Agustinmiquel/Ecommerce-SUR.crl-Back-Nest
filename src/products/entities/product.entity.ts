@@ -22,7 +22,7 @@ export class Product {
     nullable: true,
   })
   @JoinColumn({ name: 'categoryName', referencedColumnName: 'name' })
-  categoryId: Category;
+  category: Category;
 
   @Column('decimal', { default: 0.0 })
   price: number;
