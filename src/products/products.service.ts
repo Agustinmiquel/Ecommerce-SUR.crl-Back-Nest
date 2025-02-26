@@ -138,4 +138,49 @@ export class ProductsService {
       }
     }
   }
+
+  async actualizarCategoriaProducto(file: Express.Multer.File) {
+    const excel = XSLS.read(file.buffer, { type: 'buffer' });
+    const hojaCodigo = excel.SheetNames[0];
+    const hoja = excel.Sheets[hojaCodigo];
+    const datos = XSLS.utils.sheet_to_json(hoja);
+
+    for (const data in datos) {
+      const productName = data['name'] ? String(data['name']).trim() : null;
+      const categoryName = data['category']
+        ? String(data['category']).trim()
+        : null;
+
+      if (!productName || !categoryName) {
+        this.logger.error('Faltan datos en el archivo');
+        continue;
+      }
+
+      const product = await this.productRepository.findOne({
+        where: { name: productName },
+      });
+      if (!product) {
+        this.logger.error(`No existe el producto: ${productName}`);
+        continue;
+      }
+
+      const categoria = await this.categoryRepository.findOne({
+        where: { name: categoryName },
+      });
+      if (!categoria) {
+        this.logger.error(`No existe la categoría: ${categoryName}`);
+        continue;
+      }
+
+      product.category = categoria;
+      try {
+        await this.productRepository.save(product);
+      } catch (error) {
+        this.logger.error(
+          `Error al actualizar la categoría del producto: ${error.message}`,
+        );
+        throw new Error(error.message);
+      }
+    }
+  }
 }

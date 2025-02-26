@@ -107,4 +107,16 @@ export class ProductsController {
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
   }
+
+  @ApiOperation({
+    summary: 'Actualizar la categoría de los productos desde un archivo Excel',
+  })
+  @ApiResponse({ status: 200, description: 'Categories have been updated' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @Post('update-category')
+  @UseInterceptors(FileInterceptor('file'))
+  async actualizarCategoriaProducto(@UploadedFile() file: Express.Multer.File) {
+    await this.productsService.actualizarCategoriaProducto(file);
+    return 'Categorías actualizadas';
+  }
 }
