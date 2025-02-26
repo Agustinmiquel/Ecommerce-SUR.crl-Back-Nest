@@ -113,7 +113,7 @@ export class ProductsController {
   })
   @ApiResponse({ status: 200, description: 'Categories have been updated' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @Patch('update-category')
+  @Post('update-category')
   @UseInterceptors(FileInterceptor('file'))
   async actualizarCategoriaProducto(@UploadedFile() file: Express.Multer.File) {
     await this.productsService.actualizarCategoriaProducto(file);
