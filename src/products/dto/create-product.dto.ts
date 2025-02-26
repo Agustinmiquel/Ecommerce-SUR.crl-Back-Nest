@@ -30,7 +30,6 @@ export class CreateProductDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsPositive()
   categoryId: string;
 
   @IsBoolean()

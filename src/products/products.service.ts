@@ -24,6 +24,7 @@ export class ProductsService {
     return await this.productRepository.find({
       skip: skip,
       take: limit,
+      relations: ['category'],
     });
   }
 
