@@ -62,7 +62,7 @@ export class ProductsService {
     }
 
     const product = await this.productRepository.find({
-      where: { codigo: ILike(`${code}%`) },
+      where: { codigo: ILike(`%${code.toString()}%`) },
     });
     if (!product || product.length === 0) {
       this.logger.error(`No existe el producto con código: ${code}`);
