@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Category } from '../categories/entities/category.entity';
 import { CreateCategoryDto } from 'src/categories/dto/create-category.dto';
-import { ILike } from 'typeorm';
+import { ILike, Raw } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
@@ -52,23 +52,22 @@ export class ProductsService {
 
   async findByCode(code: number): Promise<Product[]> {
     const codeStr = code.toString();
-    const regex = /^30\d+/;
-    const regexCode = /^code\d+/;
-
-    if (!regex.test(codeStr.toString()) && regexCode.test(code.toString())) {
-      this.logger.error(`El código del producto no es válido: ${code}`);
-      throw new NotFoundException(
-        `El código del producto no es válido: ${code}`,
-      );
-    }
+    const pattern = `%${codeStr}%`;
 
     const products = await this.productRepository.find({
-      where: { codigo: ILike(`${codeStr}%`) },
+      where: {
+        // Se castea el campo a texto para poder aplicar LIKE
+        codigo: Raw((alias) => `CAST(${alias} AS TEXT) LIKE :pattern`, {
+          pattern,
+        }),
+      },
     });
+
     if (!products || products.length === 0) {
       this.logger.error(`No existe el producto con código: ${code}`);
       throw new NotFoundException(`No existe el producto con código: ${code}`);
     }
+
     return products;
   }
 
