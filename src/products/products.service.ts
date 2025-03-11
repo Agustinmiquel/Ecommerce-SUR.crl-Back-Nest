@@ -50,7 +50,7 @@ export class ProductsService {
     });
   }
 
-  async findByCode(code: number): Promise<Product[]> {
+  async findByCode(code: string): Promise<Product[]> {
     const regex = /^30\d+/;
     const regexCode = /^code\d+/;
 
