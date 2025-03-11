@@ -50,25 +50,26 @@ export class ProductsService {
     });
   }
 
-  async findByCode(code: string): Promise<Product[]> {
+  async findByCode(code: number): Promise<Product[]> {
+    const codeStr = code.toString();
     const regex = /^30\d+/;
     const regexCode = /^code\d+/;
 
-    if (!regex.test(code.toString()) && regexCode.test(code.toString())) {
+    if (!regex.test(codeStr.toString()) && regexCode.test(code.toString())) {
       this.logger.error(`El código del producto no es válido: ${code}`);
       throw new NotFoundException(
         `El código del producto no es válido: ${code}`,
       );
     }
 
-    const product = await this.productRepository.find({
-      where: { codigo: ILike(`%${code.toString()}%`) },
+    const products = await this.productRepository.find({
+      where: { codigo: ILike(`${codeStr}%`) },
     });
-    if (!product || product.length === 0) {
+    if (!products || products.length === 0) {
       this.logger.error(`No existe el producto con código: ${code}`);
       throw new NotFoundException(`No existe el producto con código: ${code}`);
     }
-    return product;
+    return products;
   }
 
   // Buscar por nombre del producto

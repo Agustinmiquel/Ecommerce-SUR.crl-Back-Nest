@@ -78,7 +78,7 @@ export class ProductsController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @Get('code/:code')
   async findByCode(@Param('code') code: string) {
-    return await this.productsService.findByCode(code);
+    return await this.productsService.findByCode(+code);
   }
 
   // Buscar por nombre del producto
